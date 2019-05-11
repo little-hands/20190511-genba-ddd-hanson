@@ -9,14 +9,15 @@ class Contract {
   private List<OptionPlan> optionPlans;
 
   public Contract(@NonNull CapacityPlan capacityPlan,
-                  @NonNull List<OptionPlan> optionPlans) {
+          @NonNull List<OptionPlan> optionPlans) {
+    // 選択時にオプションプランの設定可能条件をチェックする
     validatePlan(capacityPlan, optionPlans);
     this.capacityPlan = capacityPlan;
     this.optionPlans = optionPlans;
   }
 
   private void validatePlan(@NonNull CapacityPlan capacityPlan,
-                            @NonNull List<OptionPlan> optionPlans) {
+                @NonNull List<OptionPlan> optionPlans) {
     optionPlans.forEach(plan -> {
           if (!plan.getPermittedCapacityPlans().contains(capacityPlan)) {
             throw new NotPermittedCapacityPlanException("許可されていないプランです");
@@ -26,6 +27,7 @@ class Contract {
   }
 
   MonthlyTotalPrice calculateTotalPrice() {
+    // 契約で選択したプランに応じて請求金額を計算する
     // capacityPlanのPriceとoptionPlansすべてのPriceを足し合わせる
     Price sumPrice = this.optionPlans.stream()
         .reduce(this.capacityPlan.getPrice(), (sum, plan) -> plan.getPrice(), Price::plus);
@@ -45,6 +47,8 @@ enum CapacityPlan {
   _1GB(1000),
   _3GB(3000),
   _30GB(6000);
+  
+  // プランごとに月額が決まっている
   private Price price;
 
   CapacityPlan(int price) {
@@ -70,6 +74,8 @@ enum OptionPlan {
   );
 
   private Price price;
+  
+  // オプションは設定できる容量プランが決まっている
   private List<CapacityPlan> permittedCapacityPlans;
 
   OptionPlan(int price, List<CapacityPlan> permittedCapacityPlans) {
