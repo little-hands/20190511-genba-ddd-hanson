@@ -9,15 +9,20 @@ class Contract {
   private List<OptionPlan> optionPlans;
 
   public Contract(@NonNull CapacityPlan capacityPlan,
-          @NonNull List<OptionPlan> optionPlan) {
+                  @NonNull List<OptionPlan> optionPlans) {
+    validatePlan(capacityPlan, optionPlans);
+    this.capacityPlan = capacityPlan;
+    this.optionPlans = optionPlans;
+  }
+
+  private void validatePlan(@NonNull CapacityPlan capacityPlan,
+                            @NonNull List<OptionPlan> optionPlans) {
     optionPlans.forEach(plan -> {
           if (!plan.getPermittedCapacityPlans().contains(capacityPlan)) {
             throw new NotPermittedCapacityPlanException("許可されていないプランです");
           }
         }
     );
-    this.capacityPlan = capacityPlan;
-    this.optionPlans = optionPlan;
   }
 
   MonthlyTotalPrice calculateTotalPrice() {
